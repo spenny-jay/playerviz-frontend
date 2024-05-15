@@ -1,0 +1,39 @@
+.players-list {
+  overflow: scroll;
+  border: solid 1px rgb(0, 0, 0, 0.2);
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-style: italic;
+  border: solid 1px rgb(0, 0, 0, 0.2);
+}
+
+.row {
+  border-top: solid 1px rgb(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5%;
+}
+
+.profile-pic {
+  width: 120px;
+  height: 110px;
+}
+
+h1 {
+  margin: 0;
+  height: 100%;
+}
