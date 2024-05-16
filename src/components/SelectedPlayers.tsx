@@ -9,7 +9,12 @@ type Props = {
   setPlayerList: Dispatch<SetStateAction<PlayerModel[]>>;
 };
 
-function PlayerList({ playerList, setPlayerList }: Props) {
+/**
+ * List that shows which players are displayed on the chart
+ * @param param0
+ * @returns
+ */
+function SelectedPlayers({ playerList, setPlayerList }: Props) {
   const removePlayer = (index: number) => {
     setPlayerList(playerList.filter((_, i) => i !== index));
   };
@@ -47,4 +52,4 @@ function PlayerList({ playerList, setPlayerList }: Props) {
   );
 }
 
-export default PlayerList;
+export default SelectedPlayers;

@@ -3,8 +3,13 @@ import Search from "./Search";
 import PlayerChart from "./PlayerChart";
 import { useState } from "react";
 import { PlayerModel } from "../models/PlayerModel";
-import PlayerList from "./PlayerList";
+import SelectedPlayers from "./SelectedPlayers";
 
+/**
+ * Parent element for the contents related to displaying
+ * charts and player data
+ * @returns
+ */
 function MainDashboard() {
   const [playerList, setPlayerList] = useState<PlayerModel[]>([]);
 
@@ -15,7 +20,10 @@ function MainDashboard() {
       </Row>
       <Row>
         <Col lg={4}>
-          <PlayerList playerList={playerList} setPlayerList={setPlayerList} />
+          <SelectedPlayers
+            playerList={playerList}
+            setPlayerList={setPlayerList}
+          />
         </Col>
         <Col className="mt-sm-5 mt-lg-0">
           <PlayerChart playerList={playerList} />

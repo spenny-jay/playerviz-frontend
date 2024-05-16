@@ -4,7 +4,7 @@ function Title() {
   return (
     <Container fluid>
       <Row className="justify-content-center p-4">
-        <Col xs="auto" className="justify-content-center">
+        <Col xs="auto">
           <h1>Welcome to PlayerViz.io</h1>
         </Col>
       </Row>

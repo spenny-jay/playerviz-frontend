@@ -1,5 +1,5 @@
 import MainDashboard from "./components/MainDashboard";
-import Title from "./components/Title";
+import Title from "./layout/Title";
 import NavBar from "./layout/NavBar";
 
 function App() {

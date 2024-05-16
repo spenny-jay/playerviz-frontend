@@ -7,23 +7,41 @@ type Props = {
   setPlayerList: Dispatch<SetStateAction<PlayerModel[]>>;
 };
 
+/**
+ * Used to autocomplete user input with QB names. Once
+ * a player is selected, the player list will update
+ * @param setPlayerList Used to update the player list with
+ * new QB entries
+ */
 function SearchDropdown({ setPlayerList }: Props) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [playerSuggestions, setPlayerSuggestions] = useState([]);
+  // loads the autocomplete bar when fetching player names
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // names and id pairs that match the user input
+  const [playerSuggestions, setPlayerSuggestions] = useState<NameModel[]>([]);
+  // stores the user input
   const dropdownRef = useRef(null);
 
-  const addPlayer = async (playerId: string) => {
+  /**
+   * Once the user selects a dropdown option, the option's mapped playerId
+   * will be used to request additional player data
+   * @param playerId: Id of a player
+   */
+  const addPlayer = async (playerId: string): Promise<void> => {
     const res = await fetch(
       `http://${process.env.REACT_APP_BACKEND_API}/api/players/player/${playerId}`
     );
 
     const playerData: PlayerModel = await res.json();
-    console.log(playerData);
     setPlayerList((currPlayerList) => [...currPlayerList, playerData]);
     dropdownRef.current.clear();
   };
 
-  const handleSearch = async (query: string) => {
+  /**
+   * Upon the user entering a player's name in the dropdown, it
+   * will fetch any players whose name matches the user's input
+   * @param query
+   */
+  const handleSearch = async (query: string): Promise<void> => {
     setIsLoading(true);
     try {
       const res = await fetch(

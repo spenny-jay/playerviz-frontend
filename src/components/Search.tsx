@@ -7,15 +7,17 @@ type Props = {
   setPlayerList: Dispatch<SetStateAction<PlayerModel[]>>;
 };
 
+/**
+ * Parent class storing the
+ * @param setPlayerList: updates the playerList contents
+ */
 function Search({ setPlayerList }: Props) {
   return (
     <Form>
       <Container fluid>
         <Row className="justify-content-center">
           <Col sm={6}>
-            <Form.Group className="mx-1" controlId="playerInput">
-              <SearchDropdown setPlayerList={setPlayerList} />
-            </Form.Group>
+            <SearchDropdown setPlayerList={setPlayerList} />
           </Col>
         </Row>
       </Container>
