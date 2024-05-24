@@ -1,6 +1,6 @@
 import { LineChart } from "@mui/x-charts";
 import { PlayerModel } from "../models/PlayerModel";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, Row, Col, Button, Container } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import TeamColors from "../TeamColors.js";
 import { StatsModel } from "../models/StatsModel";
@@ -102,38 +102,50 @@ function PlayerChart({ playerList }: Props) {
 
   return (
     <Form onSubmit={(e) => renderGraph(e)}>
-      <Row>
+      <Row className="mt-">
         <Col>
-          <Form.Control
-            type="number"
-            placeholder="Start Year"
-            value={startYear}
-            onChange={(e) => setStartYear(+e.target.value)}
-          />
+          <Form.Group controlId="startYear">
+            <Form.Label>Start Year</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Start Year"
+              value={startYear}
+              onChange={(e) => setStartYear(+e.target.value)}
+            />
+          </Form.Group>
         </Col>
         <Col>
-          <Form.Control
-            type="number"
-            placeholder="End Year"
-            value={endYear}
-            onChange={(e) => setEndYear(+e.target.value)}
-          />
+          <Form.Group controlId="endYear">
+            <Form.Label>End Year</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="End Year"
+              value={endYear}
+              onChange={(e) => setEndYear(+e.target.value)}
+            />
+          </Form.Group>
         </Col>
         <Col>
-          <Form.Select
-            value={statCategory}
-            onChange={(e) => setStatCategory(e.target.value)}
-          >
-            <option>YDS</option>
-            <option>GP</option>
-            <option>TD</option>
-            <option>INT</option>
-          </Form.Select>
+          <Form.Group controlId="stat">
+            <Form.Label>Stat</Form.Label>
+            <Form.Select
+              value={statCategory}
+              onChange={(e) => setStatCategory(e.target.value)}
+            >
+              <option>YDS</option>
+              <option>GP</option>
+              <option>TD</option>
+              <option>INT</option>
+            </Form.Select>
+          </Form.Group>
         </Col>
         <Col>
-          <Button type="submit">Submit</Button>
+          <Button style={{ marginTop: "32px", width: "100%" }} type="submit">
+            Submit
+          </Button>
         </Col>
       </Row>
+
       <Row>
         <LineChart
           xAxis={xAxis}

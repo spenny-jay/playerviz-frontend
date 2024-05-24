@@ -1,5 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
-import Search from "./Search";
+import SearchDropdown from "./SearchDropdown";
 import PlayerChart from "./PlayerChart";
 import { useState } from "react";
 import { PlayerModel } from "../models/PlayerModel";
@@ -14,10 +14,7 @@ function MainDashboard() {
   const [playerList, setPlayerList] = useState<PlayerModel[]>([]);
 
   return (
-    <Container fluid>
-      <Row className="justify-content-center mb-5">
-        <Search setPlayerList={setPlayerList} />
-      </Row>
+    <Container className="p-3" fluid>
       <Row>
         <Col lg={4}>
           <SelectedPlayers
@@ -25,8 +22,13 @@ function MainDashboard() {
             setPlayerList={setPlayerList}
           />
         </Col>
-        <Col className="mt-sm-5 mt-lg-0">
-          <PlayerChart playerList={playerList} />
+        <Col className="mt-sm-5 mt-lg-2">
+          <Row>
+            <SearchDropdown setPlayerList={setPlayerList} />
+          </Row>
+          <Row>
+            <PlayerChart playerList={playerList} />
+          </Row>
         </Col>
       </Row>
     </Container>

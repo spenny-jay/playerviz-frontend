@@ -2,6 +2,7 @@ import { useState, useRef, Dispatch, SetStateAction } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { NameModel } from "../models/NameModel";
 import { PlayerModel } from "../models/PlayerModel";
+import { Form } from "react-bootstrap";
 
 type Props = {
   setPlayerList: Dispatch<SetStateAction<PlayerModel[]>>;
@@ -57,18 +58,21 @@ function SearchDropdown({ setPlayerList }: Props) {
   };
 
   return (
-    <AsyncTypeahead
-      id="async-example"
-      isLoading={isLoading}
-      labelKey={(option) => `${option["Player"]}`}
-      minLength={3}
-      onSearch={handleSearch}
-      filterBy={["Player"]}
-      placeholder="Search for an NFL player..."
-      options={playerSuggestions}
-      onChange={(selected: NameModel[]) => addPlayer(selected[0]?.Id)}
-      ref={dropdownRef}
-    />
+    <Form.Group controlId="player">
+      <Form.Label>Player Name</Form.Label>
+      <AsyncTypeahead
+        id="async-example"
+        isLoading={isLoading}
+        labelKey={(option) => `${option["Player"]}`}
+        minLength={3}
+        onSearch={handleSearch}
+        filterBy={["Player"]}
+        placeholder="Search for an NFL player..."
+        options={playerSuggestions}
+        onChange={(selected: NameModel[]) => addPlayer(selected[0]?.Id)}
+        ref={dropdownRef}
+      />
+    </Form.Group>
   );
 }
 

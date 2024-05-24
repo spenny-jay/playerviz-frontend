@@ -1,19 +1,18 @@
-import MainDashboard from "./components/MainDashboard";
-import Title from "./layout/Title";
 import NavBar from "./layout/NavBar";
+import { UserProvider } from "./context/UserProvider";
+import MainContent from "./layout/MainContent";
 
 function App() {
   return (
-    <div className="mx-3">
-      <header>
-        <NavBar />
-      </header>
-      <main>
-        <Title />
-        <MainDashboard />
-      </main>
-      <footer></footer>
-    </div>
+    <UserProvider>
+      <div className="mx-3">
+        <header>
+          <NavBar />
+        </header>
+        <MainContent />
+        <footer></footer>
+      </div>
+    </UserProvider>
   );
 }
 

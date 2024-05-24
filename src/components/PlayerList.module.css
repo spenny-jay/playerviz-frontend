@@ -1,7 +1,6 @@
 .players-list {
   overflow: scroll;
-  border: solid 1px rgb(0, 0, 0, 0.2);
-  height: 60vh;
+  height: 69vh;
   display: flex;
   flex-direction: column;
 }
@@ -11,11 +10,10 @@
   justify-content: center;
   align-items: center;
   font-style: italic;
-  border: solid 1px rgb(0, 0, 0, 0.2);
+  border-bottom: solid 1px rgb(0, 0, 0, 0.2);
 }
 
 .row {
-  border-top: solid 1px rgb(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;

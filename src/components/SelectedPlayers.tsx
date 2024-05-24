@@ -22,7 +22,7 @@ function SelectedPlayers({ playerList, setPlayerList }: Props) {
   return (
     <div className={classes["player-list-container"]}>
       <div className={classes["header-wrapper"]}>
-        <h3>Selected Players</h3>
+        <h3>Selected Players ({playerList.length})</h3>
       </div>
       <div className={classes["players-list"]}>
         {playerList.map((player: PlayerModel, index: number) => {
