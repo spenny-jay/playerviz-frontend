@@ -24,6 +24,7 @@ function AccessTabs() {
       );
       if (res.ok) {
         const token = await res.json();
+        localStorage.setItem("token", token);
         setToken(token);
       } else {
         console.log("Bad login attempt, try again.");
@@ -50,6 +51,7 @@ function AccessTabs() {
       );
       if (res.ok) {
         const token = await res.json();
+        localStorage.setItem("token", token);
         setToken(token);
       } else {
         console.log(

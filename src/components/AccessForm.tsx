@@ -24,7 +24,7 @@ function AccessForm({ submitFn, formKey, isLoading }: Props) {
           onChange={(e) => setUsername(e.target.value)}
           value={username}
           type="username"
-          placeholder="Password"
+          placeholder="Username"
         />
       </Form.Group>
 

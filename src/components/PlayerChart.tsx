@@ -102,7 +102,7 @@ function PlayerChart({ playerList }: Props) {
 
   return (
     <Form onSubmit={(e) => renderGraph(e)}>
-      <Row className="mt-">
+      <Row className="mt-2">
         <Col>
           <Form.Group controlId="startYear">
             <Form.Label>Start Year</Form.Label>

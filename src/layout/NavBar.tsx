@@ -7,6 +7,7 @@ function NavBar() {
 
   const handleUserLogout = () => {
     setToken("");
+    localStorage.removeItem("token");
   };
 
   return (
