@@ -29,10 +29,18 @@ function SearchDropdown({ setPlayerList }: Props) {
    */
   const addPlayer = async (playerId: string): Promise<void> => {
     const res = await fetch(
-      `http://${process.env.REACT_APP_BACKEND_API}/api/players/player/${playerId}`
+      `http://${process.env.REACT_APP_BACKEND_API}/api/players/player/${playerId}`,
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+      }
     );
 
     const playerData: PlayerModel = await res.json();
+    console.log(playerData);
     setPlayerList((currPlayerList) => [...currPlayerList, playerData]);
     dropdownRef.current.clear();
   };
@@ -46,7 +54,14 @@ function SearchDropdown({ setPlayerList }: Props) {
     setIsLoading(true);
     try {
       const res = await fetch(
-        `http://${process.env.REACT_APP_BACKEND_API}/api/players/${query}`
+        `http://${process.env.REACT_APP_BACKEND_API}/api/players/${query}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+        }
       );
 
       const playerNames: NameModel[] = await res.json();

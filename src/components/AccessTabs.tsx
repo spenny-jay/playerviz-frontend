@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { UserContext } from "../context/UserProvider";
 
 function AccessTabs() {
-  const { setToken } = useContext(UserContext);
+  const { setToken, setUserId } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -23,9 +23,11 @@ function AccessTabs() {
         }
       );
       if (res.ok) {
-        const token = await res.json();
-        localStorage.setItem("token", token);
-        setToken(token);
+        const authRes = await res.json();
+
+        localStorage.setItem("token", authRes.token);
+        setToken(authRes.token);
+        setUserId(authRes.userId);
       } else {
         console.log("Bad login attempt, try again.");
       }
@@ -50,9 +52,10 @@ function AccessTabs() {
         }
       );
       if (res.ok) {
-        const token = await res.json();
-        localStorage.setItem("token", token);
-        setToken(token);
+        const authRes = await res.json();
+        localStorage.setItem("token", authRes.token);
+        setToken(authRes.token);
+        setUserId(authRes.userId);
       } else {
         console.log(
           "Make sure your password is at least 8 characters long with 1 special character and/or your username is at least 8 characters and unique"

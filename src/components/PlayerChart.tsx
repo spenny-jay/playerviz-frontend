@@ -1,6 +1,6 @@
 import { LineChart } from "@mui/x-charts";
 import { PlayerModel } from "../models/PlayerModel";
-import { Form, Row, Col, Button, Container } from "react-bootstrap";
+import { Form, Row, Col, Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import TeamColors from "../TeamColors.js";
 import { StatsModel } from "../models/StatsModel";
@@ -48,7 +48,7 @@ function PlayerChart({ playerList }: Props) {
       data: generateDataPoints(stats),
       label: playerList[i].Player,
       curve: "linear",
-      color: TeamColors[playerList[i]["Current Team"]],
+      color: TeamColors[playerList[i].CurrentTeam],
     }));
 
     // generate tick marks for chart

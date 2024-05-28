@@ -2,12 +2,6 @@ import { Tabs, Tab } from "react-bootstrap";
 import { useState } from "react";
 import MainDashboard from "./MainDashboard";
 
-// idea:
-// 1. user logins
-// 2. retrieve dashboard metadata {key: <name of dashboard>, dashboardId}
-// 3. useEffect to retrieve the selected tab's dashboard
-// 4. retrieve playerList to pass to MainDashboard
-
 function DashboardTabs() {
   const [keys, setKeys] = useState([
     {
@@ -33,7 +27,7 @@ function DashboardTabs() {
     <Tabs activeKey={activeTab} onSelect={(k) => handleTabSelect(k)}>
       {keys.map((keys) => {
         return (
-          <Tab eventKey={keys.key} title={keys.key}>
+          <Tab key={keys.key} eventKey={keys.key} title={keys.key}>
             <MainDashboard />
           </Tab>
         );

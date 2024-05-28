@@ -27,7 +27,7 @@ function SelectedPlayers({ playerList, setPlayerList }: Props) {
       <div className={classes["players-list"]}>
         {playerList.map((player: PlayerModel, index: number) => {
           return (
-            <>
+            <div key={player.Id}>
               <Row className={`${classes["row"]}`}>
                 <Col>
                   <Image
@@ -39,12 +39,12 @@ function SelectedPlayers({ playerList, setPlayerList }: Props) {
                   />
                 </Col>
                 <Col>{player.Player}</Col>
-                <Col>{player["Current Team"]}</Col>
+                <Col>{player.CurrentTeam}</Col>
                 <span className={classes["close-btn"]}>
                   <CloseButton onClick={() => removePlayer(index)} />
                 </span>
               </Row>
-            </>
+            </div>
           );
         })}
       </div>

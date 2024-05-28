@@ -8,7 +8,6 @@ import SelectedPlayers from "./SelectedPlayers";
 /**
  * Parent element for the contents related to displaying
  * charts and player data
- * @returns
  */
 function MainDashboard() {
   const [playerList, setPlayerList] = useState<PlayerModel[]>([]);
