@@ -1,0 +1,9 @@
+.title-input {
+  border: none;
+  text-overflow: ellipsis;
+}
+
+.floppy-icon {
+  margin-left: 5px;
+  margin-bottom: 7px;
+}

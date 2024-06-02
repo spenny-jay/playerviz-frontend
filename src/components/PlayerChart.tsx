@@ -1,9 +1,10 @@
 import { LineChart } from "@mui/x-charts";
 import { PlayerModel } from "../models/PlayerModel";
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import TeamColors from "../TeamColors.js";
 import { StatsModel } from "../models/StatsModel";
+import { PlayerFormContext } from "../context/PlayerFormProvider";
 
 type Props = {
   playerList: PlayerModel[];
@@ -15,12 +16,10 @@ type Props = {
  * @param playerList: stores players to display
  */
 function PlayerChart({ playerList }: Props) {
-  const [startYear, setStartYear] = useState<number>(2020);
-  const [endYear, setEndYear] = useState<number>(2023);
-  const [statCategory, setStatCategory] = useState<string>("YDS");
-
   const [series, setSeries] = useState([]);
   const [xAxis, setXAxis] = useState([]);
+
+  const { playerForm, setPlayerForm } = useContext(PlayerFormContext);
 
   // whenever a player is added or remove, update the chart
   useEffect(() => {
@@ -39,7 +38,8 @@ function PlayerChart({ playerList }: Props) {
     // remove years outside of the specified range
     const filteredStatsList = playerList.map((player) => {
       return player.Stats.filter(
-        (stat) => stat.Year >= startYear && stat.Year <= endYear
+        (stat) =>
+          stat.Year >= playerForm.startYear && stat.Year <= playerForm.endYear
       );
     });
 
@@ -58,7 +58,8 @@ function PlayerChart({ playerList }: Props) {
 
   const generateXAxisData = (): void => {
     const years: number[] = [];
-    for (var year = startYear; year <= endYear; year++) years.push(year);
+    for (var year = playerForm.startYear; year <= playerForm.endYear; year++)
+      years.push(year);
 
     // data for the x-axis, update according to the years selected
     const xAxisPoints = [
@@ -83,8 +84,8 @@ function PlayerChart({ playerList }: Props) {
 
     // iterate through every year the user set to illustrate
     for (
-      let currYear = startYear;
-      currYear <= endYear && stats.length > 0;
+      let currYear = playerForm.startYear;
+      currYear <= playerForm.endYear && stats.length > 0;
       currYear++
     ) {
       // null years where a player did not play
@@ -93,7 +94,7 @@ function PlayerChart({ playerList }: Props) {
       } else {
         // if the year is within the specified bounds, add the stat
         currYear >= startDataPoint && currYear <= endDataPoint
-          ? res.push(stats[idx++][statCategory])
+          ? res.push(stats[idx++][playerForm.statCategory])
           : res.push(null);
       }
     }
@@ -109,8 +110,10 @@ function PlayerChart({ playerList }: Props) {
             <Form.Control
               type="number"
               placeholder="Start Year"
-              value={startYear}
-              onChange={(e) => setStartYear(+e.target.value)}
+              value={playerForm.startYear}
+              onChange={(e) =>
+                setPlayerForm({ ...playerForm, startYear: +e.target.value })
+              }
             />
           </Form.Group>
         </Col>
@@ -120,8 +123,10 @@ function PlayerChart({ playerList }: Props) {
             <Form.Control
               type="number"
               placeholder="End Year"
-              value={endYear}
-              onChange={(e) => setEndYear(+e.target.value)}
+              value={playerForm.endYear}
+              onChange={(e) =>
+                setPlayerForm({ ...playerForm, endYear: +e.target.value })
+              }
             />
           </Form.Group>
         </Col>
@@ -129,8 +134,10 @@ function PlayerChart({ playerList }: Props) {
           <Form.Group controlId="stat">
             <Form.Label>Stat</Form.Label>
             <Form.Select
-              value={statCategory}
-              onChange={(e) => setStatCategory(e.target.value)}
+              value={playerForm.statCategory}
+              onChange={(e) =>
+                setPlayerForm({ ...playerForm, statCategory: e.target.value })
+              }
             >
               <option>YDS</option>
               <option>GP</option>

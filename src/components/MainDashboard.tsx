@@ -1,17 +1,20 @@
 import { Container, Row, Col } from "react-bootstrap";
 import SearchDropdown from "./SearchDropdown";
 import PlayerChart from "./PlayerChart";
-import { useState } from "react";
-import { PlayerModel } from "../models/PlayerModel";
 import SelectedPlayers from "./SelectedPlayers";
+import { PlayerModel } from "../models/PlayerModel";
+import { SetStateAction } from "react";
 
 /**
  * Parent element for the contents related to displaying
  * charts and player data
  */
-function MainDashboard() {
-  const [playerList, setPlayerList] = useState<PlayerModel[]>([]);
+type Props = {
+  playerList: PlayerModel[];
+  setPlayerList: React.Dispatch<SetStateAction<PlayerModel[]>>;
+};
 
+function MainDashboard({ playerList, setPlayerList }: Props) {
   return (
     <Container className="p-3" fluid>
       <Row>
