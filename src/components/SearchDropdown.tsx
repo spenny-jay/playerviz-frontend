@@ -40,7 +40,6 @@ function SearchDropdown({ setPlayerList }: Props) {
     );
 
     const playerData: PlayerModel = await res.json();
-    console.log(playerData);
     setPlayerList((currPlayerList) => [...currPlayerList, playerData]);
     dropdownRef.current.clear();
   };

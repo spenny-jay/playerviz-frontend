@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Title from "./Title";
 import { UserContext } from "../context/UserProvider";
-import DashboardTabs from "../components/DashboardTabs";
+import DashboardTabs from "../components/dashboards/DashboardTabs";
 import AccessTabs from "../components/AccessTabs";
 import { PlayerFormProvider } from "../context/PlayerFormProvider";
 
