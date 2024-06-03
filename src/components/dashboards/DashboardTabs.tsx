@@ -9,36 +9,50 @@ import { DashboardRequest } from "../../models/DashboardRequest";
 import DashboardModal from "./DashboardModal";
 import { GetAsync, PostAsync } from "../Globals";
 import { DashboardResponse } from "../../models/DashboardResponse";
+import { DashboardNameModel } from "../../models/DashboardNameModel";
 
 function DashboardTabs() {
+  // selected tab to display contents
   const [activeTab, setActiveTab] = useState<string>();
+  // reveals the create/load dashboard modal
   const [showModal, setShowModal] = useState<boolean>(true);
+  // player data to render on graph
   const [playerList, setPlayerList] = useState<PlayerModel[]>([]);
+  // lifts player chart form data for requests here
   const { playerForm, setPlayerForm } = useContext(PlayerFormContext);
 
-  const switchTab = async (dashboardId: string) => {
-    if (dashboardId === "addTab") {
+  /**
+   * Function used to switch tabs and populate dashboard data.
+   * If the "addTab" dashboard is selected, prompt the modal
+   * @param dashboardId What tab to reveal
+   */
+  const switchTab = async (tabId: string) => {
+    if (tabId === "addTab") {
       setShowModal(true);
-      setPlayerList([]);
-      return;
-    }
+    } else if (tabId !== activeTab) {
+      const dashboard = await GetAsync<DashboardResponse>(
+        `api/dashboards/dashboard/${tabId}`
+      );
 
-    const dashboard = await GetAsync<DashboardResponse>(
-      `api/dashboards/dashboard/${dashboardId}`
-    );
-    setPlayerList(dashboard.playerList);
-    setPlayerForm({
-      startYear: dashboard.startYear,
-      endYear: dashboard.endYear,
-      statCategory: dashboard.statCategory,
-    });
-    setActiveTab(dashboard.dashboardId);
+      loadDashboard(tabState, dashboard);
+    }
   };
 
-  const loadDashboard = (state, dashboard) => {
+  /**
+   * Renders data from a selected dashboard. Logic to handle duplicates
+   * @param state
+   * @param dashboard
+   * @returns
+   */
+  const loadDashboard = (
+    state: DashboardNameModel[],
+    dashboard: DashboardResponse
+  ) => {
     let tabState = state;
 
-    const dashboardExists = state.some(
+    // if the loaded dashboard is already present,
+    // don't add a duplicate tab
+    const dashboardExists: boolean = state.some(
       (el) => el.dashboardId === dashboard.dashboardId
     );
     if (!dashboardExists) {
@@ -50,6 +64,7 @@ function DashboardTabs() {
         },
       ];
     }
+    // render and reveal the dashboard's content
     setPlayerList(dashboard.playerList);
     setPlayerForm({
       startYear: dashboard.startYear,
@@ -60,8 +75,16 @@ function DashboardTabs() {
     return tabState;
   };
 
-  const tabReducer = (state, action) => {
+  /**
+   * Manages the state of the tabs
+   * @param state Current state of the tabs
+   * @param action Defines the action to execute and data to modify
+   * state with
+   * @returns updated state
+   */
+  const tabReducer = (state: DashboardNameModel[], action) => {
     switch (action.type) {
+      // update the edited name of a dashboard
       case "UPDATE":
         return state.map((tab) => {
           if (tab.dashboardId === action.dashboardId) {
@@ -69,6 +92,7 @@ function DashboardTabs() {
           }
           return tab;
         });
+      // add a new dashboard and tab
       case "ADD":
         const newDashboardId = uuidv4();
         const newState = [
@@ -80,10 +104,12 @@ function DashboardTabs() {
         ];
         setActiveTab(newDashboardId);
         return newState;
+      // delete a dashboard and its tab
       case "DELETE":
         const deleteState = state.filter(
           (tab) => tab.dashboardId !== action.dashboardId
         );
+        // switch to another tab or prompt the user to add/load a new dashboard
         const tabSwitch = async () => {
           deleteState.length >= 1
             ? await switchTab(deleteState[deleteState.length - 1].dashboardId)
@@ -91,6 +117,7 @@ function DashboardTabs() {
         };
         tabSwitch();
         return deleteState;
+      // load a dashboard from the backend and render it
       case "LOAD":
         return loadDashboard(state, action.dashboard);
       default:
@@ -98,8 +125,14 @@ function DashboardTabs() {
     }
   };
 
+  // used to manage the state of the tabs on the screen
   const [tabState, tabDispatch] = useReducer(tabReducer, []);
 
+  /**
+   * Saves a provided dashboard upon clicking the save icon
+   * @param dashboardId
+   * @param dashboardName
+   */
   const saveDashboard = async (dashboardId: string, dashboardName: string) => {
     const dashboardReq: DashboardRequest = {
       playerIds: playerList.map((player) => player.Id),
@@ -136,7 +169,7 @@ function DashboardTabs() {
                   isActive={activeTab === tab.dashboardId}
                 />
               }
-            ></Tab>
+            />
           );
         })}
         <Tab eventKey="addTab" title="+ Dashboard" />
