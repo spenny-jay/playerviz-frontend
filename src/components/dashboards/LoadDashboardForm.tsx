@@ -1,18 +1,17 @@
-import { useEffect, useState, SetStateAction, Dispatch } from "react";
+import { useEffect, useState, SetStateAction } from "react";
 import { Form } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { DashboardNameModel } from "../../models/DashboardNameModel";
+import { GetAsync } from "../Globals";
 
 type Props = {
   selectedDashboards: DashboardNameModel[];
   setSelectedDashboards: React.Dispatch<SetStateAction<DashboardNameModel[]>>;
-  tabDispatch: Dispatch<any>;
 };
 
 function LoadDashboardForm({
   selectedDashboards,
   setSelectedDashboards,
-  tabDispatch,
 }: Props) {
   const [dashboardOptions, setDashboardOptions] = useState<
     DashboardNameModel[]
@@ -25,17 +24,7 @@ function LoadDashboardForm({
 
   const getUserDashboards = async () => {
     try {
-      const res = await fetch(
-        `http://${process.env.REACT_APP_BACKEND_API}/api/dashboards/`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("token"),
-          },
-        }
-      );
-      const dashboards = await res.json();
+      const dashboards = await GetAsync(`api/dashboards/`);
       setDashboardOptions(dashboards["dashboardNames"]);
     } catch (e) {
       console.log(e);

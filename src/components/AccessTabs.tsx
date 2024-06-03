@@ -2,36 +2,30 @@ import { Tabs, Tab, Col, Row } from "react-bootstrap";
 import AccessForm from "./AccessForm";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/UserProvider";
+import { PostAsync } from "./Globals";
+import { AuthRequest } from "../models/AuthRequest";
+import { AuthResponse } from "../models/AuthResponse";
 
 function AccessTabs() {
-  const { setToken, setUserId } = useContext(UserContext);
+  const { setToken } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const logIn = async (username: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      const res = await fetch(
-        `http://${process.env.REACT_APP_BACKEND_API}/api/users/login`,
+      const authRes = await PostAsync<AuthResponse, AuthRequest>(
+        `api/users/login`,
         {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username: username, password: password }),
+          username: username,
+          password: password,
         }
       );
-      if (res.ok) {
-        const authRes = await res.json();
 
-        localStorage.setItem("token", authRes.token);
-        setToken(authRes.token);
-        setUserId(authRes.userId);
-      } else {
-        console.log("Bad login attempt, try again.");
-      }
+      localStorage.setItem("token", authRes.token);
+      setToken(authRes.token);
     } catch (e) {
+      console.log("Bad login attempt, try again.");
       console.log(e);
     }
     setIsLoading(false);
@@ -40,28 +34,20 @@ function AccessTabs() {
   const signUp = async (username: string, password: string): Promise<void> => {
     setIsLoading(false);
     try {
-      const res = await fetch(
-        `http://${process.env.REACT_APP_BACKEND_API}/api/users/signup`,
+      const authRes = await PostAsync<AuthResponse, AuthRequest>(
+        `api/users/signup`,
         {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username: username, password: password }),
+          username: username,
+          password: password,
         }
       );
-      if (res.ok) {
-        const authRes = await res.json();
-        localStorage.setItem("token", authRes.token);
-        setToken(authRes.token);
-        setUserId(authRes.userId);
-      } else {
-        console.log(
-          "Make sure your password is at least 8 characters long with 1 special character and/or your username is at least 8 characters and unique"
-        );
-      }
+
+      localStorage.setItem("token", authRes.token);
+      setToken(authRes.token);
     } catch (e) {
+      console.log(
+        "Make sure your password is at least 8 characters long with 1 special character and/or your username is at least 8 characters and unique"
+      );
       console.log(e);
     }
     setIsLoading(true);

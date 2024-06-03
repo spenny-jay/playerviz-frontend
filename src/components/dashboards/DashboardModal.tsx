@@ -4,6 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CreateDashboardForm from "./CreateDashboardForm";
 import LoadDashboardForm from "./LoadDashboardForm";
 import { DashboardNameModel } from "../../models/DashboardNameModel";
+import { GetAsync } from "../Globals";
+import { DashboardResponse } from "../../models/DashboardResponse";
 
 type Props = {
   showModal: boolean;
@@ -26,18 +28,11 @@ function DashboardModal({ showModal, setShowModal, tabDispatch }: Props) {
         });
       });
     } else if (activeTab === "load") {
-      const res = await fetch(
-        `http://${process.env.REACT_APP_BACKEND_API}/api/dashboards/dashboard/${selectedDashboards[0].dashboardId}`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("token"),
-          },
-        }
-      );
-      const loadedDashboard = await res.json();
-      console.log(loadedDashboard);
+      const loadedDashboard: DashboardResponse =
+        await GetAsync<DashboardResponse>(
+          `api/dashboards/dashboard/${selectedDashboards[0].dashboardId}`
+        );
+
       tabDispatch({ type: "LOAD", dashboard: loadedDashboard });
     }
 
@@ -61,7 +56,6 @@ function DashboardModal({ showModal, setShowModal, tabDispatch }: Props) {
             <LoadDashboardForm
               selectedDashboards={selectedDashboards}
               setSelectedDashboards={setSelectedDashboards}
-              tabDispatch={tabDispatch}
             />
           </Tab>
         </Tabs>

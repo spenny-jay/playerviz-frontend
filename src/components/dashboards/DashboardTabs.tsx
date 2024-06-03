@@ -7,20 +7,58 @@ import { PlayerModel } from "../../models/PlayerModel";
 import { PlayerFormContext } from "../../context/PlayerFormProvider";
 import { DashboardRequest } from "../../models/DashboardRequest";
 import DashboardModal from "./DashboardModal";
-import { DashboardNameModel } from "../../models/DashboardNameModel";
-
-const initTabs: DashboardNameModel[] = [
-  {
-    dashboardName: "Untitled Dashboard",
-    dashboardId: uuidv4(),
-  },
-];
+import { GetAsync, PostAsync } from "../Globals";
+import { DashboardResponse } from "../../models/DashboardResponse";
 
 function DashboardTabs() {
-  const [activeTab, setActiveTab] = useState<string>(initTabs[0].dashboardId);
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>();
+  const [showModal, setShowModal] = useState<boolean>(true);
   const [playerList, setPlayerList] = useState<PlayerModel[]>([]);
   const { playerForm, setPlayerForm } = useContext(PlayerFormContext);
+
+  const switchTab = async (dashboardId: string) => {
+    if (dashboardId === "addTab") {
+      setShowModal(true);
+      setPlayerList([]);
+      return;
+    }
+
+    const dashboard = await GetAsync<DashboardResponse>(
+      `api/dashboards/dashboard/${dashboardId}`
+    );
+    setPlayerList(dashboard.playerList);
+    setPlayerForm({
+      startYear: dashboard.startYear,
+      endYear: dashboard.endYear,
+      statCategory: dashboard.statCategory,
+    });
+    setActiveTab(dashboard.dashboardId);
+  };
+
+  const loadDashboard = (state, dashboard) => {
+    let tabState = state;
+
+    const dashboardExists = state.some(
+      (el) => el.dashboardId === dashboard.dashboardId
+    );
+    if (!dashboardExists) {
+      tabState = [
+        ...state,
+        {
+          dashboardId: dashboard.dashboardId,
+          dashboardName: dashboard.dashboardName,
+        },
+      ];
+    }
+    setPlayerList(dashboard.playerList);
+    setPlayerForm({
+      startYear: dashboard.startYear,
+      endYear: dashboard.endYear,
+      statCategory: dashboard.statCategory,
+    });
+    setActiveTab(dashboard.dashboardId);
+    return tabState;
+  };
 
   const tabReducer = (state, action) => {
     switch (action.type) {
@@ -43,33 +81,24 @@ function DashboardTabs() {
         setActiveTab(newDashboardId);
         return newState;
       case "DELETE":
-        return state.filter((tab) => tab.dashboardId !== action.dashboardId);
+        const deleteState = state.filter(
+          (tab) => tab.dashboardId !== action.dashboardId
+        );
+        const tabSwitch = async () => {
+          deleteState.length >= 1
+            ? await switchTab(deleteState[deleteState.length - 1].dashboardId)
+            : await switchTab("addTab");
+        };
+        tabSwitch();
+        return deleteState;
       case "LOAD":
-        console.log(action.dashboard);
-        const dashboard = action.dashboard;
-        setPlayerList(dashboard.playerList);
-        setPlayerForm({
-          startYear: dashboard.startYear,
-          endYear: dashboard.endYear,
-          statCategory: dashboard.statCategory,
-        });
-        const tabState = [
-          ...state,
-          {
-            dashboardId: dashboard.dashboardId,
-            dashboardName: dashboard.dashboardName,
-          },
-        ];
-        setActiveTab(dashboard.dashboardId);
-        console.log(tabState);
-        console.log(playerList);
-        return tabState;
+        return loadDashboard(state, action.dashboard);
       default:
         return state;
     }
   };
 
-  const [tabState, tabDispatch] = useReducer(tabReducer, initTabs);
+  const [tabState, tabDispatch] = useReducer(tabReducer, []);
 
   const saveDashboard = async (dashboardId: string, dashboardName: string) => {
     const dashboardReq: DashboardRequest = {
@@ -81,32 +110,18 @@ function DashboardTabs() {
       statCategory: playerForm.statCategory,
     };
 
-    console.log(dashboardReq);
-    const res = await fetch(
-      `http://${process.env.REACT_APP_BACKEND_API}/api/dashboards/`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
-        },
-        body: JSON.stringify(dashboardReq),
-      }
+    const savedDashboardId: string = await PostAsync<string, DashboardRequest>(
+      `api/dashboards/`,
+      dashboardReq
     );
-    const savedDashboardId: string = await res.json();
-    console.log(savedDashboardId);
     if (savedDashboardId) {
       console.log(`Successfully saved dashboard ${savedDashboardId}`);
     }
   };
 
-  const switchTab = (key: string) =>
-    key === "addTab" ? setShowModal(true) : setActiveTab(key);
-
   return (
     <>
-      <Tabs activeKey={activeTab} onSelect={(key) => switchTab(key)}>
+      <Tabs activeKey={activeTab} justify onSelect={(key) => switchTab(key)}>
         {tabState.map((tab) => {
           return (
             <Tab
@@ -121,16 +136,15 @@ function DashboardTabs() {
                   isActive={activeTab === tab.dashboardId}
                 />
               }
-            >
-              <MainDashboard
-                playerList={playerList}
-                setPlayerList={setPlayerList}
-              />
-            </Tab>
+            ></Tab>
           );
         })}
         <Tab eventKey="addTab" title="+ Dashboard" />
       </Tabs>
+
+      {tabState.length >= 1 && (
+        <MainDashboard playerList={playerList} setPlayerList={setPlayerList} />
+      )}
 
       {showModal && (
         <DashboardModal

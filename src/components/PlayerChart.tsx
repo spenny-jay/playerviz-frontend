@@ -24,7 +24,6 @@ function PlayerChart({ playerList }: Props) {
   // whenever a player is added or remove, update the chart
   useEffect(() => {
     renderGraph();
-    console.log(playerList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerList]);
 

@@ -1,5 +1,4 @@
-import { CloseButton } from "react-bootstrap";
-import { Floppy } from "react-bootstrap-icons";
+import { Floppy, XLg } from "react-bootstrap-icons";
 
 import classes from "./DashboardTabTitle.module.css";
 import { Dispatch } from "react";
@@ -33,17 +32,20 @@ function DashboardTabTitle({
           })
         }
       />
-      <CloseButton
-        onClick={() =>
-          tabDispatch({ type: "DELETE", dashboardId: dashboardId })
-        }
-      />
-      {isActive && (
-        <Floppy
-          onClick={() => saveDashboard(dashboardId, dashboardName)}
-          className={classes["floppy-icon"]}
+      <div className={classes["button-wrapper"]}>
+        {isActive && (
+          <Floppy
+            onClick={() => saveDashboard(dashboardId, dashboardName)}
+            className={classes["floppy-icon"]}
+          />
+        )}
+        <XLg
+          className={classes["x-icon"]}
+          onClick={() =>
+            tabDispatch({ type: "DELETE", dashboardId: dashboardId })
+          }
         />
-      )}
+      </div>
     </>
   );
 }

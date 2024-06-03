@@ -4,6 +4,13 @@
 }
 
 .floppy-icon {
-  margin-left: 5px;
-  margin-bottom: 7px;
+  margin-right: 10px;
+}
+
+.button-wrapper {
+  float: right;
+}
+
+.x-icon {
+  font-size: 20px;
 }

@@ -3,6 +3,7 @@ import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { NameModel } from "../models/NameModel";
 import { PlayerModel } from "../models/PlayerModel";
 import { Form } from "react-bootstrap";
+import { GetAsync } from "./Globals";
 
 type Props = {
   setPlayerList: Dispatch<SetStateAction<PlayerModel[]>>;
@@ -28,18 +29,9 @@ function SearchDropdown({ setPlayerList }: Props) {
    * @param playerId: Id of a player
    */
   const addPlayer = async (playerId: string): Promise<void> => {
-    const res = await fetch(
-      `http://${process.env.REACT_APP_BACKEND_API}/api/players/player/${playerId}`,
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
-        },
-      }
+    const playerData = await GetAsync<PlayerModel>(
+      `api/players/player/${playerId}`
     );
-
-    const playerData: PlayerModel = await res.json();
     setPlayerList((currPlayerList) => [...currPlayerList, playerData]);
     dropdownRef.current.clear();
   };
@@ -52,18 +44,7 @@ function SearchDropdown({ setPlayerList }: Props) {
   const handleSearch = async (query: string): Promise<void> => {
     setIsLoading(true);
     try {
-      const res = await fetch(
-        `http://${process.env.REACT_APP_BACKEND_API}/api/players/${query}`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("token"),
-          },
-        }
-      );
-
-      const playerNames: NameModel[] = await res.json();
+      const playerNames = await GetAsync<NameModel[]>(`api/players/${query}`);
       setPlayerSuggestions(playerNames);
     } catch (e) {
       console.log(e.message);

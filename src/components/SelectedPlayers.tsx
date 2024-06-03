@@ -2,7 +2,7 @@ import { Row, Col, Image, CloseButton } from "react-bootstrap";
 import { PlayerModel } from "../models/PlayerModel";
 import { Dispatch, SetStateAction } from "react";
 
-import classes from "./PlayerList.module.css";
+import classes from "./SelectedPlayers.module.css";
 
 type Props = {
   playerList: PlayerModel[];
