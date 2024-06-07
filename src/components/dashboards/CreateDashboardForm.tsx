@@ -3,19 +3,20 @@ import { DashboardNameModel } from "../../models/DashboardNameModel";
 import { SetStateAction } from "react";
 
 type Props = {
-  setSelectedDashboards: React.Dispatch<SetStateAction<DashboardNameModel[]>>;
+  setSelectedDashboard: React.Dispatch<SetStateAction<DashboardNameModel>>;
 };
 
-function CreateDashboardForm({ setSelectedDashboards }: Props) {
+function CreateDashboardForm({ setSelectedDashboard }: Props) {
   return (
     <>
       <Form.Group className="mt-3" controlId="dashboard-name">
         <Form.Label>Dashboard Name</Form.Label>
         <Form.Control
           onChange={(e) =>
-            setSelectedDashboards([
-              { dashboardId: null, dashboardName: e.target.value },
-            ])
+            setSelectedDashboard({
+              dashboardId: null,
+              dashboardName: e.target.value,
+            })
           }
         />
       </Form.Group>

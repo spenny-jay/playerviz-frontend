@@ -1,13 +1,13 @@
 import { LineChart } from "@mui/x-charts";
-import { PlayerModel } from "../models/PlayerModel";
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { useEffect, useState, useContext } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import TeamColors from "../TeamColors.js";
 import { StatsModel } from "../models/StatsModel";
-import { PlayerFormContext } from "../context/PlayerFormProvider";
+import { DashboardResponse } from "../models/DashboardResponse";
 
 type Props = {
-  playerList: PlayerModel[];
+  currDashboard: DashboardResponse;
+  setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
 };
 
 /**
@@ -15,17 +15,16 @@ type Props = {
  * rendering logic
  * @param playerList: stores players to display
  */
-function PlayerChart({ playerList }: Props) {
+function PlayerChart({ currDashboard, setCurrDashboard }: Props) {
   const [series, setSeries] = useState([]);
   const [xAxis, setXAxis] = useState([]);
-
-  const { playerForm, setPlayerForm } = useContext(PlayerFormContext);
 
   // whenever a player is added or remove, update the chart
   useEffect(() => {
     renderGraph();
+    console.log(currDashboard.playerList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playerList]);
+  }, [currDashboard.playerList]);
 
   /**
    * Used to update the contents on the graph according
@@ -36,19 +35,20 @@ function PlayerChart({ playerList }: Props) {
     if (e) e.preventDefault();
 
     // remove years outside of the specified range
-    const filteredStatsList = playerList.map((player) => {
+    const filteredStatsList = currDashboard.playerList.map((player) => {
       return player.Stats.filter(
         (stat) =>
-          stat.Year >= playerForm.startYear && stat.Year <= playerForm.endYear
+          stat.Year >= currDashboard.startYear &&
+          stat.Year <= currDashboard.endYear
       );
     });
 
     // gather x-axis data points and set chart metadata
     const dataPoints = filteredStatsList.map((stats, i) => ({
       data: generateDataPoints(stats),
-      label: playerList[i].Player,
+      label: currDashboard.playerList[i].Player,
       curve: "linear",
-      color: TeamColors[playerList[i].CurrentTeam],
+      color: TeamColors[currDashboard.playerList[i].CurrentTeam],
     }));
 
     // generate tick marks for chart
@@ -58,7 +58,11 @@ function PlayerChart({ playerList }: Props) {
 
   const generateXAxisData = (): void => {
     const years: number[] = [];
-    for (var year = playerForm.startYear; year <= playerForm.endYear; year++)
+    for (
+      var year = currDashboard.startYear;
+      year <= currDashboard.endYear;
+      year++
+    )
       years.push(year);
 
     // data for the x-axis, update according to the years selected
@@ -84,8 +88,8 @@ function PlayerChart({ playerList }: Props) {
 
     // iterate through every year the user set to illustrate
     for (
-      let currYear = playerForm.startYear;
-      currYear <= playerForm.endYear && stats.length > 0;
+      let currYear = currDashboard.startYear;
+      currYear <= currDashboard.endYear && stats.length > 0;
       currYear++
     ) {
       // null years where a player did not play
@@ -94,7 +98,7 @@ function PlayerChart({ playerList }: Props) {
       } else {
         // if the year is within the specified bounds, add the stat
         currYear >= startDataPoint && currYear <= endDataPoint
-          ? res.push(stats[idx++][playerForm.statCategory])
+          ? res.push(stats[idx++][currDashboard.statCategory])
           : res.push(null);
       }
     }
@@ -110,9 +114,12 @@ function PlayerChart({ playerList }: Props) {
             <Form.Control
               type="number"
               placeholder="Start Year"
-              value={playerForm.startYear}
+              value={currDashboard.startYear}
               onChange={(e) =>
-                setPlayerForm({ ...playerForm, startYear: +e.target.value })
+                setCurrDashboard({
+                  ...currDashboard,
+                  startYear: +e.target.value,
+                })
               }
             />
           </Form.Group>
@@ -123,9 +130,12 @@ function PlayerChart({ playerList }: Props) {
             <Form.Control
               type="number"
               placeholder="End Year"
-              value={playerForm.endYear}
+              value={currDashboard.endYear}
               onChange={(e) =>
-                setPlayerForm({ ...playerForm, endYear: +e.target.value })
+                setCurrDashboard({
+                  ...currDashboard,
+                  endYear: +e.target.value,
+                })
               }
             />
           </Form.Group>
@@ -134,9 +144,12 @@ function PlayerChart({ playerList }: Props) {
           <Form.Group controlId="stat">
             <Form.Label>Stat</Form.Label>
             <Form.Select
-              value={playerForm.statCategory}
+              value={currDashboard.statCategory}
               onChange={(e) =>
-                setPlayerForm({ ...playerForm, statCategory: e.target.value })
+                setCurrDashboard({
+                  ...currDashboard,
+                  statCategory: e.target.value,
+                })
               }
             >
               <option>YDS</option>

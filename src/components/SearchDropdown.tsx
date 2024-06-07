@@ -1,12 +1,12 @@
-import { useState, useRef, Dispatch, SetStateAction } from "react";
+import { useState, useRef, SetStateAction } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { NameModel } from "../models/NameModel";
-import { PlayerModel } from "../models/PlayerModel";
 import { Form } from "react-bootstrap";
-import { GetAsync } from "./Globals";
+import { getPlayerApi, getPlayerNamesApi } from "../Api";
+import { DashboardResponse } from "../models/DashboardResponse";
 
 type Props = {
-  setPlayerList: Dispatch<SetStateAction<PlayerModel[]>>;
+  setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
 };
 
 /**
@@ -15,7 +15,7 @@ type Props = {
  * @param setPlayerList Used to update the player list with
  * new QB entries
  */
-function SearchDropdown({ setPlayerList }: Props) {
+function SearchDropdown({ setCurrDashboard }: Props) {
   // loads the autocomplete bar when fetching player names
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // names and id pairs that match the user input
@@ -29,10 +29,13 @@ function SearchDropdown({ setPlayerList }: Props) {
    * @param playerId: Id of a player
    */
   const addPlayer = async (playerId: string): Promise<void> => {
-    const playerData = await GetAsync<PlayerModel>(
-      `api/players/player/${playerId}`
-    );
-    setPlayerList((currPlayerList) => [...currPlayerList, playerData]);
+    const playerData = await getPlayerApi(playerId);
+    setCurrDashboard((dashboard) => {
+      return {
+        ...dashboard,
+        playerList: [...dashboard.playerList, playerData],
+      };
+    });
     dropdownRef.current.clear();
   };
 
@@ -44,7 +47,7 @@ function SearchDropdown({ setPlayerList }: Props) {
   const handleSearch = async (query: string): Promise<void> => {
     setIsLoading(true);
     try {
-      const playerNames = await GetAsync<NameModel[]>(`api/players/${query}`);
+      const playerNames = await getPlayerNamesApi(query);
       setPlayerSuggestions(playerNames);
     } catch (e) {
       console.log(e.message);

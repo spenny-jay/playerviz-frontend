@@ -2,8 +2,7 @@ import { Tabs, Tab, Col, Row } from "react-bootstrap";
 import AccessForm from "./AccessForm";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/UserProvider";
-import { PostAsync } from "./Globals";
-import { AuthRequest } from "../models/AuthRequest";
+import { loginApi, signUpApi } from "../Api";
 import { AuthResponse } from "../models/AuthResponse";
 
 function AccessTabs() {
@@ -14,13 +13,10 @@ function AccessTabs() {
   const logIn = async (username: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      const authRes = await PostAsync<AuthResponse, AuthRequest>(
-        `api/users/login`,
-        {
-          username: username,
-          password: password,
-        }
-      );
+      const authRes: AuthResponse = await loginApi({
+        username: username,
+        password: password,
+      });
 
       localStorage.setItem("token", authRes.token);
       setToken(authRes.token);
@@ -34,13 +30,10 @@ function AccessTabs() {
   const signUp = async (username: string, password: string): Promise<void> => {
     setIsLoading(false);
     try {
-      const authRes = await PostAsync<AuthResponse, AuthRequest>(
-        `api/users/signup`,
-        {
-          username: username,
-          password: password,
-        }
-      );
+      const authRes: AuthResponse = await signUpApi({
+        username: username,
+        password: password,
+      });
 
       localStorage.setItem("token", authRes.token);
       setToken(authRes.token);

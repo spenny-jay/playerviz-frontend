@@ -1,25 +1,20 @@
 import { Tabs, Tab } from "react-bootstrap";
-import { useState, useContext, useReducer } from "react";
+import { useState, useReducer } from "react";
 import MainDashboard from "../MainDashboard";
 import DashboardTabTitle from "./DashboardTabTitle";
-import { v4 as uuidv4 } from "uuid";
-import { PlayerModel } from "../../models/PlayerModel";
-import { PlayerFormContext } from "../../context/PlayerFormProvider";
 import { DashboardRequest } from "../../models/DashboardRequest";
 import DashboardModal from "./DashboardModal";
-import { GetAsync, PostAsync } from "../Globals";
 import { DashboardResponse } from "../../models/DashboardResponse";
 import { DashboardNameModel } from "../../models/DashboardNameModel";
+import { getDashboardApi, saveDashboardApi } from "../../Api";
 
 function DashboardTabs() {
   // selected tab to display contents
-  const [activeTab, setActiveTab] = useState<string>();
+  const [activeTab, setActiveTab] = useState<string>("addTab");
   // reveals the create/load dashboard modal
   const [showModal, setShowModal] = useState<boolean>(true);
   // player data to render on graph
-  const [playerList, setPlayerList] = useState<PlayerModel[]>([]);
-  // lifts player chart form data for requests here
-  const { playerForm, setPlayerForm } = useContext(PlayerFormContext);
+  const [currDashboard, setCurrDashboard] = useState<DashboardResponse>();
 
   /**
    * Function used to switch tabs and populate dashboard data.
@@ -30,10 +25,7 @@ function DashboardTabs() {
     if (tabId === "addTab") {
       setShowModal(true);
     } else if (tabId !== activeTab) {
-      const dashboard = await GetAsync<DashboardResponse>(
-        `api/dashboards/dashboard/${tabId}`
-      );
-
+      const dashboard = await getDashboardApi(tabId);
       loadDashboard(tabState, dashboard);
     }
   };
@@ -42,7 +34,6 @@ function DashboardTabs() {
    * Renders data from a selected dashboard. Logic to handle duplicates
    * @param state
    * @param dashboard
-   * @returns
    */
   const loadDashboard = (
     state: DashboardNameModel[],
@@ -65,12 +56,7 @@ function DashboardTabs() {
       ];
     }
     // render and reveal the dashboard's content
-    setPlayerList(dashboard.playerList);
-    setPlayerForm({
-      startYear: dashboard.startYear,
-      endYear: dashboard.endYear,
-      statCategory: dashboard.statCategory,
-    });
+    setCurrDashboard(dashboard);
     setActiveTab(dashboard.dashboardId);
     return tabState;
   };
@@ -94,29 +80,13 @@ function DashboardTabs() {
         });
       // add a new dashboard and tab
       case "ADD":
-        const newDashboardId = uuidv4();
-        const newState = [
-          ...state,
-          {
-            dashboardName: action.dashboardName || "Untitled Dashboard",
-            dashboardId: newDashboardId,
-          },
-        ];
-        setActiveTab(newDashboardId);
+        const { dashboard } = action;
+        const newState = [...state, dashboard];
+        setActiveTab(dashboard.dashboardId);
         return newState;
       // delete a dashboard and its tab
       case "DELETE":
-        const deleteState = state.filter(
-          (tab) => tab.dashboardId !== action.dashboardId
-        );
-        // switch to another tab or prompt the user to add/load a new dashboard
-        const tabSwitch = async () => {
-          deleteState.length >= 1
-            ? await switchTab(deleteState[deleteState.length - 1].dashboardId)
-            : await switchTab("addTab");
-        };
-        tabSwitch();
-        return deleteState;
+        return state.filter((tab) => tab.dashboardId !== action.dashboardId);
       // load a dashboard from the backend and render it
       case "LOAD":
         return loadDashboard(state, action.dashboard);
@@ -135,26 +105,29 @@ function DashboardTabs() {
    */
   const saveDashboard = async (dashboardId: string, dashboardName: string) => {
     const dashboardReq: DashboardRequest = {
-      playerIds: playerList.map((player) => player.Id),
+      playerIds: currDashboard.playerList.map((player) => player.Id),
       dashboardName: dashboardName,
-      dashboardId: dashboardId,
-      startYear: playerForm.startYear,
-      endYear: playerForm.endYear,
-      statCategory: playerForm.statCategory,
+      startYear: currDashboard.startYear,
+      endYear: currDashboard.endYear,
+      statCategory: currDashboard.statCategory,
     };
 
-    const savedDashboardId: string = await PostAsync<string, DashboardRequest>(
-      `api/dashboards/`,
-      dashboardReq
+    const savedDashboardId: string = await saveDashboardApi(
+      dashboardReq,
+      dashboardId
     );
     if (savedDashboardId) {
-      console.log(`Successfully saved dashboard ${savedDashboardId}`);
+      console.log(`Successfully saved dashboard: ${dashboardId}`);
     }
   };
 
   return (
     <>
-      <Tabs activeKey={activeTab} justify onSelect={(key) => switchTab(key)}>
+      <Tabs
+        activeKey={activeTab}
+        justify
+        onSelect={async (key) => await switchTab(key)}
+      >
         {tabState.map((tab) => {
           return (
             <Tab
@@ -176,7 +149,10 @@ function DashboardTabs() {
       </Tabs>
 
       {tabState.length >= 1 && (
-        <MainDashboard playerList={playerList} setPlayerList={setPlayerList} />
+        <MainDashboard
+          currDashboard={currDashboard}
+          setCurrDashboard={setCurrDashboard}
+        />
       )}
 
       {showModal && (

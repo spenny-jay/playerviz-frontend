@@ -4,8 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import CreateDashboardForm from "./CreateDashboardForm";
 import LoadDashboardForm from "./LoadDashboardForm";
 import { DashboardNameModel } from "../../models/DashboardNameModel";
-import { GetAsync } from "../Globals";
 import { DashboardResponse } from "../../models/DashboardResponse";
+import { DashboardRequest } from "../../models/DashboardRequest";
+import { createDashboardApi, getDashboardApi } from "../../Api";
 
 type Props = {
   showModal: boolean;
@@ -14,30 +15,37 @@ type Props = {
 };
 
 function DashboardModal({ showModal, setShowModal, tabDispatch }: Props) {
-  const [selectedDashboards, setSelectedDashboards] = useState<
-    DashboardNameModel[]
-  >([]);
+  const [selectedDashboard, setSelectedDashboard] =
+    useState<DashboardNameModel>({ dashboardId: null, dashboardName: null });
   const [activeTab, setActiveTab] = useState<string>("create");
 
   const submitDashboard = async () => {
-    if (activeTab === "create") {
-      selectedDashboards.forEach((selectedDashboard) => {
-        tabDispatch({
-          type: "ADD",
-          dashboardName: selectedDashboard.dashboardName,
-        });
-      });
-    } else if (activeTab === "load") {
-      const loadedDashboard: DashboardResponse =
-        await GetAsync<DashboardResponse>(
-          `api/dashboards/dashboard/${selectedDashboards[0].dashboardId}`
-        );
-
-      tabDispatch({ type: "LOAD", dashboard: loadedDashboard });
-    }
-
-    setSelectedDashboards([]);
+    let loadedDashboard: DashboardResponse =
+      activeTab === "create"
+        ? await createDashboard()
+        : await getDashboardApi(selectedDashboard.dashboardId);
+    tabDispatch({ type: "LOAD", dashboard: loadedDashboard });
     setShowModal(false);
+  };
+
+  const createDashboard = async (): Promise<DashboardResponse> => {
+    const dashboard: DashboardRequest = {
+      dashboardName: selectedDashboard.dashboardName,
+      playerIds: [],
+      startYear: 2020,
+      endYear: 2023,
+      statCategory: "YDS",
+    };
+    const savedDashboardId = await createDashboardApi(dashboard);
+
+    if (savedDashboardId) {
+      return {
+        ...dashboard,
+        playerList: [],
+        dashboardId: savedDashboardId,
+      };
+    }
+    return null;
   };
 
   const handleClose = () => setShowModal(false);
@@ -48,15 +56,10 @@ function DashboardModal({ showModal, setShowModal, tabDispatch }: Props) {
       <Modal.Body>
         <Tabs activeKey={activeTab} onSelect={(key) => setActiveTab(key)} fill>
           <Tab eventKey="create" title="Create Dashboard">
-            <CreateDashboardForm
-              setSelectedDashboards={setSelectedDashboards}
-            />
+            <CreateDashboardForm setSelectedDashboard={setSelectedDashboard} />
           </Tab>
           <Tab eventKey="load" title="Load Dashboard">
-            <LoadDashboardForm
-              selectedDashboards={selectedDashboards}
-              setSelectedDashboards={setSelectedDashboards}
-            />
+            <LoadDashboardForm setSelectedDashboard={setSelectedDashboard} />
           </Tab>
         </Tabs>
       </Modal.Body>

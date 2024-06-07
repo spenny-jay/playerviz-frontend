@@ -1,12 +1,13 @@
 import { Row, Col, Image, CloseButton } from "react-bootstrap";
 import { PlayerModel } from "../models/PlayerModel";
-import { Dispatch, SetStateAction } from "react";
+import { SetStateAction } from "react";
 
 import classes from "./SelectedPlayers.module.css";
+import { DashboardResponse } from "../models/DashboardResponse";
 
 type Props = {
-  playerList: PlayerModel[];
-  setPlayerList: Dispatch<SetStateAction<PlayerModel[]>>;
+  currDashboard: DashboardResponse;
+  setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
 };
 
 /**
@@ -14,18 +15,21 @@ type Props = {
  * @param param0
  * @returns
  */
-function SelectedPlayers({ playerList, setPlayerList }: Props) {
+function SelectedPlayers({ currDashboard, setCurrDashboard }: Props) {
   const removePlayer = (index: number) => {
-    setPlayerList(playerList.filter((_, i) => i !== index));
+    setCurrDashboard({
+      ...currDashboard,
+      playerList: currDashboard.playerList.filter((_, i) => i !== index),
+    });
   };
 
   return (
     <div className={classes["player-list-container"]}>
       <div className={classes["header-wrapper"]}>
-        <h3>Selected Players ({playerList.length})</h3>
+        <h3>Selected Players ({currDashboard.playerList.length})</h3>
       </div>
       <div className={classes["players-list"]}>
-        {playerList.map((player: PlayerModel, index: number) => {
+        {currDashboard.playerList.map((player: PlayerModel, index: number) => {
           return (
             <div key={player.Id}>
               <Row className={`${classes["row"]}`}>

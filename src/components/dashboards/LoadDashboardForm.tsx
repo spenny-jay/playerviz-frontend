@@ -2,30 +2,26 @@ import { useEffect, useState, SetStateAction } from "react";
 import { Form } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { DashboardNameModel } from "../../models/DashboardNameModel";
-import { GetAsync } from "../Globals";
+import { getUserDashboardApi } from "../../Api";
 
 type Props = {
-  selectedDashboards: DashboardNameModel[];
-  setSelectedDashboards: React.Dispatch<SetStateAction<DashboardNameModel[]>>;
+  setSelectedDashboard: React.Dispatch<SetStateAction<DashboardNameModel>>;
 };
 
-function LoadDashboardForm({
-  selectedDashboards,
-  setSelectedDashboards,
-}: Props) {
+function LoadDashboardForm({ setSelectedDashboard }: Props) {
   const [dashboardOptions, setDashboardOptions] = useState<
     DashboardNameModel[]
   >([]);
 
   useEffect(() => {
-    const retrievedDashboards = async () => getUserDashboards();
+    const retrievedDashboards = async () => await getUserDashboards();
     retrievedDashboards();
   }, []);
 
   const getUserDashboards = async () => {
     try {
-      const dashboards = await GetAsync(`api/dashboards/`);
-      setDashboardOptions(dashboards["dashboardNames"]);
+      const dashboardNames: DashboardNameModel[] = await getUserDashboardApi();
+      setDashboardOptions(dashboardNames);
     } catch (e) {
       console.log(e);
     }
@@ -40,9 +36,8 @@ function LoadDashboardForm({
           filterBy={["dashboardName"]}
           placeholder="Select a dashboard..."
           options={dashboardOptions}
-          selected={selectedDashboards}
           onChange={(selected: DashboardNameModel[]) =>
-            setSelectedDashboards(selected)
+            setSelectedDashboard(selected[0])
           }
         />
       </Form.Group>
