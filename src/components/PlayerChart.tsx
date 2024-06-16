@@ -1,5 +1,4 @@
 import { LineChart } from "@mui/x-charts";
-import { Form, Row, Col, Button } from "react-bootstrap";
 import { SetStateAction, useEffect, useState } from "react";
 import TeamColors from "../TeamColors.js";
 import { StatsModel } from "../models/StatsModel";
@@ -19,12 +18,19 @@ function PlayerChart({ currDashboard, setCurrDashboard }: Props) {
   const [series, setSeries] = useState([]);
   const [xAxis, setXAxis] = useState([]);
 
-  // whenever a player is added or remove, update the chart
+  // whenever a player is added or removed, update the chart
   useEffect(() => {
-    renderGraph();
-    console.log(currDashboard.playerList);
+    if (currDashboard.startYear <= currDashboard.endYear) {
+      renderGraph();
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currDashboard.playerList]);
+  }, [
+    currDashboard.playerList,
+    currDashboard.endYear,
+    currDashboard.startYear,
+    currDashboard.statCategory,
+  ]);
 
   /**
    * Used to update the contents on the graph according
@@ -106,77 +112,19 @@ function PlayerChart({ currDashboard, setCurrDashboard }: Props) {
   };
 
   return (
-    <Form onSubmit={(e) => renderGraph(e)}>
-      <Row className="mt-2">
-        <Col>
-          <Form.Group controlId="startYear">
-            <Form.Label>Start Year</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Start Year"
-              value={currDashboard.startYear}
-              onChange={(e) =>
-                setCurrDashboard({
-                  ...currDashboard,
-                  startYear: +e.target.value,
-                })
-              }
-            />
-          </Form.Group>
-        </Col>
-        <Col>
-          <Form.Group controlId="endYear">
-            <Form.Label>End Year</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="End Year"
-              value={currDashboard.endYear}
-              onChange={(e) =>
-                setCurrDashboard({
-                  ...currDashboard,
-                  endYear: +e.target.value,
-                })
-              }
-            />
-          </Form.Group>
-        </Col>
-        <Col>
-          <Form.Group controlId="stat">
-            <Form.Label>Stat</Form.Label>
-            <Form.Select
-              value={currDashboard.statCategory}
-              onChange={(e) =>
-                setCurrDashboard({
-                  ...currDashboard,
-                  statCategory: e.target.value,
-                })
-              }
-            >
-              <option>YDS</option>
-              <option>GP</option>
-              <option>TD</option>
-              <option>INT</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col>
-          <Button style={{ marginTop: "32px", width: "100%" }} type="submit">
-            Submit
-          </Button>
-        </Col>
-      </Row>
-
-      <Row>
-        <LineChart
-          xAxis={xAxis}
-          yAxis={[{ scaleType: "linear", min: 0 }]}
-          slotProps={{ legend: { hidden: true } }}
-          series={series}
-          width={650}
-          height={400}
-        />
-      </Row>
-    </Form>
+    <div>
+      <h2>{currDashboard.statCategory} Stat Chart</h2>
+      <LineChart
+        xAxis={xAxis}
+        yAxis={[{ scaleType: "linear", min: 0 }]}
+        slotProps={{ legend: { hidden: true } }}
+        series={series}
+        sx={{
+          backgroundColor: "white",
+        }}
+        height={350}
+      />
+    </div>
   );
 }
 

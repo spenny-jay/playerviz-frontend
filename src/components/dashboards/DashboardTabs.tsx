@@ -36,19 +36,18 @@ function DashboardTabs() {
    * @param dashboard
    */
   const loadDashboard = (
-    state: DashboardNameModel[],
+    tabs: DashboardNameModel[],
     dashboard: DashboardResponse
   ) => {
-    let tabState = state;
-
+    let tabState = tabs;
     // if the loaded dashboard is already present,
     // don't add a duplicate tab
-    const dashboardExists: boolean = state.some(
+    const dashboardExists: boolean = tabs.some(
       (el) => el.dashboardId === dashboard.dashboardId
     );
     if (!dashboardExists) {
       tabState = [
-        ...state,
+        ...tabs,
         {
           dashboardId: dashboard.dashboardId,
           dashboardName: dashboard.dashboardName,
@@ -83,10 +82,16 @@ function DashboardTabs() {
         const { dashboard } = action;
         const newState = [...state, dashboard];
         setActiveTab(dashboard.dashboardId);
+        setCurrDashboard(dashboard);
         return newState;
       // delete a dashboard and its tab
       case "DELETE":
-        return state.filter((tab) => tab.dashboardId !== action.dashboardId);
+        const { dashboardId } = action;
+        const filteredTabs = state.filter(
+          (tab) => tab.dashboardId !== dashboardId
+        );
+        setCurrDashboard(null);
+        return filteredTabs;
       // load a dashboard from the backend and render it
       case "LOAD":
         return loadDashboard(state, action.dashboard);
@@ -148,7 +153,7 @@ function DashboardTabs() {
         <Tab eventKey="addTab" title="+ Dashboard" />
       </Tabs>
 
-      {tabState.length >= 1 && (
+      {currDashboard && (
         <MainDashboard
           currDashboard={currDashboard}
           setCurrDashboard={setCurrDashboard}

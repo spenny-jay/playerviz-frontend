@@ -1,4 +1,4 @@
-import { Row, Col, Image, CloseButton } from "react-bootstrap";
+import { Row, Col, Image, CloseButton, Container } from "react-bootstrap";
 import { PlayerModel } from "../models/PlayerModel";
 import { SetStateAction } from "react";
 
@@ -8,6 +8,8 @@ import { DashboardResponse } from "../models/DashboardResponse";
 type Props = {
   currDashboard: DashboardResponse;
   setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
+  setStatsPlayer: React.Dispatch<SetStateAction<PlayerModel>>;
+  statsPlayer: PlayerModel;
 };
 
 /**
@@ -15,7 +17,12 @@ type Props = {
  * @param param0
  * @returns
  */
-function SelectedPlayers({ currDashboard, setCurrDashboard }: Props) {
+function SelectedPlayers({
+  currDashboard,
+  setCurrDashboard,
+  setStatsPlayer,
+  statsPlayer,
+}: Props) {
   const removePlayer = (index: number) => {
     setCurrDashboard({
       ...currDashboard,
@@ -24,35 +31,34 @@ function SelectedPlayers({ currDashboard, setCurrDashboard }: Props) {
   };
 
   return (
-    <div className={classes["player-list-container"]}>
-      <div className={classes["header-wrapper"]}>
-        <h3>Selected Players ({currDashboard.playerList.length})</h3>
-      </div>
-      <div className={classes["players-list"]}>
-        {currDashboard.playerList.map((player: PlayerModel, index: number) => {
-          return (
-            <div key={player.Id}>
-              <Row className={`${classes["row"]}`}>
-                <Col>
-                  <Image
-                    className={classes["profile-pic"]}
-                    src={player.ProfileUrl}
-                    key={player.ProfileUrl}
-                    rounded
-                    fluid
-                  />
-                </Col>
-                <Col>{player.Player}</Col>
-                <Col>{player.CurrentTeam}</Col>
-                <span className={classes["close-btn"]}>
-                  <CloseButton onClick={() => removePlayer(index)} />
-                </span>
-              </Row>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <Container className={`${classes["players-list"]} mt-3`}>
+      {currDashboard.playerList.map((player: PlayerModel, index: number) => {
+        return (
+          <div key={player.Id} onClick={() => setStatsPlayer(player)}>
+            <Row
+              className={`${classes["row"]} ${
+                statsPlayer?.Player === player.Player ? classes["active"] : ""
+              }`}
+            >
+              <Col>
+                <Image
+                  className={classes["profile-pic"]}
+                  src={player.ProfileUrl}
+                  key={player.ProfileUrl}
+                  rounded
+                  fluid
+                />
+              </Col>
+              <Col>{player.Player}</Col>
+              <Col>{player.CurrentTeam}</Col>
+              <span className={classes["close-btn"]}>
+                <CloseButton onClick={() => removePlayer(index)} />
+              </span>
+            </Row>
+          </div>
+        );
+      })}
+    </Container>
   );
 }
 

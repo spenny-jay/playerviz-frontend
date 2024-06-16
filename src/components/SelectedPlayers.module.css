@@ -1,8 +1,8 @@
 .players-list {
-  overflow: scroll;
-  height: 69vh;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
+  height: 75%;
 }
 
 .header-wrapper {
@@ -10,7 +10,7 @@
   justify-content: center;
   align-items: center;
   font-style: italic;
-  border-bottom: solid 1px rgb(0, 0, 0, 0.2);
+  padding-top: 5px;
 }
 
 .row {
@@ -21,9 +21,17 @@
   position: relative;
 }
 
+.active {
+  border: 1px solid rgb(0, 0, 0, 0.2);
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+}
+
 .close-btn {
   position: absolute;
   top: 5%;
+  left: 2.5%;
 }
 
 .profile-pic {

@@ -33,7 +33,6 @@ function LoadDashboardForm({ setSelectedDashboard }: Props) {
         <Typeahead
           id="load-dropdown"
           labelKey={(option) => `${option["dashboardName"]}`}
-          filterBy={["dashboardName"]}
           placeholder="Select a dashboard..."
           options={dashboardOptions}
           onChange={(selected: DashboardNameModel[]) =>

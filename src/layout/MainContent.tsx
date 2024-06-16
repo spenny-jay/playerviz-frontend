@@ -7,7 +7,7 @@ import AccessTabs from "../components/AccessTabs";
 function MainContent() {
   const { token } = useContext(UserContext);
   return (
-    <main>
+    <main className="primary-color">
       <Title />
       {token ? <DashboardTabs /> : <AccessTabs />}
     </main>
