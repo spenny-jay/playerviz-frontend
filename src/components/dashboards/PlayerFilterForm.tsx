@@ -8,6 +8,10 @@ type Props = {
   setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
 };
 
+/**
+ * User can set the start year, end year, and stat category
+ * for the data visualization
+ */
 function PlayerFilterForm({ currDashboard, setCurrDashboard }: Props) {
   return (
     <Form onSubmit={(e) => e.preventDefault()}>

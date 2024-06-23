@@ -11,6 +11,11 @@
   float: right;
 }
 
-.x-icon {
+.close-icon {
   font-size: 20px;
+}
+
+.trash-icon {
+  font-size: 20px;
+  margin-right: 10px;
 }

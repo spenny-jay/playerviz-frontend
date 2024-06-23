@@ -6,6 +6,10 @@ type Props = {
   setSelectedDashboard: React.Dispatch<SetStateAction<DashboardNameModel>>;
 };
 
+/**
+ * Form to create a new dashboard for the user. Prompts them to
+ * fill out a dashboard name and type (WIP)
+ */
 function CreateDashboardForm({ setSelectedDashboard }: Props) {
   return (
     <>

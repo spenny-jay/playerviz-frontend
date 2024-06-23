@@ -5,11 +5,11 @@ import DashboardTabs from "../components/dashboards/DashboardTabs";
 import AccessTabs from "../components/AccessTabs";
 
 function MainContent() {
-  const { token } = useContext(UserContext);
+  const { isLoggedIn } = useContext(UserContext);
   return (
     <main className="primary-color">
       <Title />
-      {token ? <DashboardTabs /> : <AccessTabs />}
+      {isLoggedIn ? <DashboardTabs /> : <AccessTabs />}
     </main>
   );
 }

@@ -3,11 +3,11 @@ import { UserContext } from "../context/UserProvider";
 import { useContext } from "react";
 
 function NavBar() {
-  const { token, setToken } = useContext(UserContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
 
   const handleUserLogout = () => {
-    setToken("");
-    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    localStorage.clear();
   };
 
   return (
@@ -17,7 +17,7 @@ function NavBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text>
-            {token && (
+            {isLoggedIn && (
               <Button onClick={() => handleUserLogout()}>Logout</Button>
             )}
           </Navbar.Text>

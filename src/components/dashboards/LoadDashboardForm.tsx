@@ -8,11 +8,18 @@ type Props = {
   setSelectedDashboard: React.Dispatch<SetStateAction<DashboardNameModel>>;
 };
 
+/**
+ * Form with a dropdown to let the user select which of their
+ * dashboards to load
+ */
 function LoadDashboardForm({ setSelectedDashboard }: Props) {
+  // dashboard names + ids that belong to the user. Will populate
+  // a dropdown to select which dashboard to load
   const [dashboardOptions, setDashboardOptions] = useState<
     DashboardNameModel[]
   >([]);
 
+  // will retrieve dashboard names and ids for the user to choose from
   useEffect(() => {
     const retrievedDashboards = async () => await getUserDashboards();
     retrievedDashboards();

@@ -7,10 +7,15 @@ type Props = {
   isLoading: boolean;
 };
 
+/**
+ * Generic form that prompts a user to enter a username and password
+ * Used by both sign-up and log-in forms
+ */
 function AccessForm({ submitFn, formKey, isLoading }: Props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  // trigger the function passed in upon form submission
   const triggerFn = (e) => {
     e.preventDefault();
     submitFn(username, password);

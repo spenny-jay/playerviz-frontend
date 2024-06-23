@@ -9,15 +9,17 @@ import classes from "./MainDashboard.module.css";
 import StatsTable from "./StatsTable";
 import { PlayerModel } from "../models/PlayerModel";
 
-/**
- * Parent element for the contents related to displaying
- * charts and player data
- */
 type Props = {
   currDashboard: DashboardResponse;
   setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
 };
+
+/**
+ * Parent element for the contents related to displaying
+ * charts and player data
+ */
 function MainDashboard({ currDashboard, setCurrDashboard }: Props) {
+  // stores stats for the selected player for the StatsTable
   const [statsPlayer, setStatsPlayer] = useState<PlayerModel>();
 
   return (
@@ -38,10 +40,7 @@ function MainDashboard({ currDashboard, setCurrDashboard }: Props) {
 
         <Col>
           <div className={`${classes["dashboard-container"]} p-3`}>
-            <PlayerChart
-              currDashboard={currDashboard}
-              setCurrDashboard={setCurrDashboard}
-            />
+            <PlayerChart currDashboard={currDashboard} />
             <div>
               {statsPlayer ? (
                 <StatsTable player={statsPlayer} />

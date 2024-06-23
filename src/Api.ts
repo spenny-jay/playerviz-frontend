@@ -5,6 +5,7 @@ import { DashboardResponse } from "./models/DashboardResponse";
 import { NameModel } from "./models/NameModel";
 import { PlayerModel } from "./models/PlayerModel";
 import { DashboardRequest } from "./models/DashboardRequest";
+import { DashboardIdResponse } from "./models/DashboardIdResponse";
 
 /// DASHBOARDS
 
@@ -65,6 +66,23 @@ export async function getDashboardApi(
     return dashboard;
   } catch (e) {
     console.log("Failed to retrieve dashboard: " + dashboardId);
+    return null;
+  }
+}
+
+/**
+ * Deletes a given dashboard by its dashboard id
+ * @param dashboardId
+ * @returns dashboard data to render on screen
+ */
+export async function deleteDashboardApi(dashboardId: string): Promise<string> {
+  try {
+    const resDashboardId = await deleteAsync<DashboardIdResponse>(
+      `api/dashboards/${dashboardId}`
+    );
+    return resDashboardId.dashboardId;
+  } catch (e) {
+    console.log("Failed to delete dashboard: " + dashboardId);
     return null;
   }
 }
@@ -145,6 +163,30 @@ export async function signUpApi(authReq: AuthRequest): Promise<AuthResponse> {
   }
 }
 
+export async function refreshApi(): Promise<string> {
+  try {
+    const refreshTokenRes = await fetch(
+      `http://${process.env.REACT_APP_BACKEND_API}/api/users/refresh`,
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("refreshToken"),
+        },
+      }
+    );
+    const resJson = await refreshTokenRes.json();
+    const token: string = resJson.token;
+    if (token) {
+      localStorage.setItem("token", token);
+      return token;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+  return "";
+}
+
 // GENERIC REQUESTS
 async function getAsync<Type>(endpoint: string): Promise<Type> {
   try {
@@ -178,6 +220,28 @@ async function postAsync<T, U>(endpoint: string, body: U): Promise<T> {
           Authorization: localStorage.getItem("token"),
         },
         body: JSON.stringify(body),
+      }
+    );
+    const data: T = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function deleteAsync<T>(endpoint: string): Promise<T> {
+  try {
+    const res = await fetch(
+      `http://${process.env.REACT_APP_BACKEND_API}/${endpoint}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
       }
     );
     const data: T = await res.json();

@@ -5,8 +5,13 @@ import { UserContext } from "../context/UserProvider";
 import { loginApi, signUpApi } from "../Api";
 import { AuthResponse } from "../models/AuthResponse";
 
+/**
+ * Contains tabs for the user to either log-in or sign-up. Upon
+ * either form submission, the user will be assigned a token
+ * and refresh token
+ */
 function AccessTabs() {
-  const { setToken } = useContext(UserContext);
+  const { setIsLoggedIn } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -19,7 +24,8 @@ function AccessTabs() {
       });
 
       localStorage.setItem("token", authRes.token);
-      setToken(authRes.token);
+      localStorage.setItem("refreshToken", authRes.refreshToken);
+      setIsLoggedIn(true);
     } catch (e) {
       console.log("Bad login attempt, try again.");
       console.log(e);
@@ -36,7 +42,8 @@ function AccessTabs() {
       });
 
       localStorage.setItem("token", authRes.token);
-      setToken(authRes.token);
+      localStorage.setItem("refreshToken", authRes.refreshToken);
+      setIsLoggedIn(true);
     } catch (e) {
       console.log(
         "Make sure your password is at least 8 characters long with 1 special character and/or your username is at least 8 characters and unique"

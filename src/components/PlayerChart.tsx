@@ -1,12 +1,11 @@
 import { LineChart } from "@mui/x-charts";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TeamColors from "../TeamColors.js";
 import { StatsModel } from "../models/StatsModel";
 import { DashboardResponse } from "../models/DashboardResponse";
 
 type Props = {
   currDashboard: DashboardResponse;
-  setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
 };
 
 /**
@@ -14,7 +13,7 @@ type Props = {
  * rendering logic
  * @param playerList: stores players to display
  */
-function PlayerChart({ currDashboard, setCurrDashboard }: Props) {
+function PlayerChart({ currDashboard }: Props) {
   const [series, setSeries] = useState([]);
   const [xAxis, setXAxis] = useState([]);
 

@@ -14,11 +14,18 @@ type Props = {
   tabDispatch: Dispatch<any>;
 };
 
+/**
+ * Modal that prompts the user to load or save a new dashboard
+ */
 function DashboardModal({ showModal, setShowModal, tabDispatch }: Props) {
+  // dashboard to load/create
   const [selectedDashboard, setSelectedDashboard] =
     useState<DashboardNameModel>({ dashboardId: null, dashboardName: null });
+  // which form to present (load or create dashboard form)
   const [activeTab, setActiveTab] = useState<string>("create");
 
+  // Upon submitting a form, either retrieve or create a new dashboard
+  // depending on which tab is accessed
   const submitDashboard = async () => {
     let loadedDashboard: DashboardResponse =
       activeTab === "create"
@@ -28,6 +35,10 @@ function DashboardModal({ showModal, setShowModal, tabDispatch }: Props) {
     setShowModal(false);
   };
 
+  /**
+   * Will execute when a dashboard has been created. Save a new
+   * dashboard with default values for the user
+   */
   const createDashboard = async (): Promise<DashboardResponse> => {
     const dashboard: DashboardRequest = {
       dashboardName: selectedDashboard.dashboardName,
@@ -48,6 +59,7 @@ function DashboardModal({ showModal, setShowModal, tabDispatch }: Props) {
     return null;
   };
 
+  // close the modal when clicked outside of it
   const handleClose = () => setShowModal(false);
 
   return (

@@ -8,6 +8,11 @@ import { DashboardResponse } from "../../models/DashboardResponse";
 import { DashboardNameModel } from "../../models/DashboardNameModel";
 import { getDashboardApi, saveDashboardApi } from "../../Api";
 
+/**
+ * Parent class for the dashboards. User can toggle which dashboard
+ * to render by selecting a presented tab. Can also add more tabs and rename
+ * existing ones
+ */
 function DashboardTabs() {
   // selected tab to display contents
   const [activeTab, setActiveTab] = useState<string>("addTab");
@@ -84,8 +89,8 @@ function DashboardTabs() {
         setActiveTab(dashboard.dashboardId);
         setCurrDashboard(dashboard);
         return newState;
-      // delete a dashboard and its tab
-      case "DELETE":
+      // close a dashboard and its tab
+      case "CLOSE":
         const { dashboardId } = action;
         const filteredTabs = state.filter(
           (tab) => tab.dashboardId !== dashboardId
@@ -108,7 +113,10 @@ function DashboardTabs() {
    * @param dashboardId
    * @param dashboardName
    */
-  const saveDashboard = async (dashboardId: string, dashboardName: string) => {
+  const saveDashboard = async (
+    dashboardId: string,
+    dashboardName: string
+  ): Promise<void> => {
     const dashboardReq: DashboardRequest = {
       playerIds: currDashboard.playerList.map((player) => player.Id),
       dashboardName: dashboardName,

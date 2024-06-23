@@ -6,6 +6,10 @@ type Props = {
   player: PlayerModel;
 };
 
+/**
+ * Upon a player being selected, it will render a table
+ * with their data in a tabular format
+ */
 function StatsTable({ player }: Props) {
   const keys = player?.Stats ? Object.keys(player.Stats[0]) : [];
 
@@ -26,7 +30,7 @@ function StatsTable({ player }: Props) {
               return (
                 <tr>
                   {keys.map((key, i) => (
-                    <td>{year[key]}</td>
+                    <td key={`${key}-${i}`}>{year[key]}</td>
                   ))}
                 </tr>
               );

@@ -13,9 +13,8 @@ type Props = {
 };
 
 /**
- * List that shows which players are displayed on the chart
- * @param param0
- * @returns
+ * List that shows which players are displayed on the chart. Can select
+ * a player entry to populate the StatsTable component
  */
 function SelectedPlayers({
   currDashboard,
