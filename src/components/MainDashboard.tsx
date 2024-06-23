@@ -1,7 +1,7 @@
 import { Container, Row, Col } from "react-bootstrap";
 import PlayerChart from "./PlayerChart";
 import SelectedPlayers from "./SelectedPlayers";
-import { SetStateAction, useState } from "react";
+import { SetStateAction } from "react";
 import { DashboardResponse } from "../models/DashboardResponse";
 import PlayerFilterForm from "./dashboards/PlayerFilterForm";
 
@@ -12,16 +12,20 @@ import { PlayerModel } from "../models/PlayerModel";
 type Props = {
   currDashboard: DashboardResponse;
   setCurrDashboard: React.Dispatch<SetStateAction<DashboardResponse>>;
+  statsPlayer: PlayerModel;
+  setStatsPlayer: React.Dispatch<SetStateAction<PlayerModel>>;
 };
 
 /**
  * Parent element for the contents related to displaying
  * charts and player data
  */
-function MainDashboard({ currDashboard, setCurrDashboard }: Props) {
-  // stores stats for the selected player for the StatsTable
-  const [statsPlayer, setStatsPlayer] = useState<PlayerModel>();
-
+function MainDashboard({
+  currDashboard,
+  setCurrDashboard,
+  setStatsPlayer,
+  statsPlayer,
+}: Props) {
   return (
     <Container className="p-3" fluid>
       <Row>

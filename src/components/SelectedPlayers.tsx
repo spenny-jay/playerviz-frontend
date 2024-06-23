@@ -23,18 +23,28 @@ function SelectedPlayers({
   statsPlayer,
 }: Props) {
   const removePlayer = (index: number) => {
+    const playerToRemove: PlayerModel = currDashboard.playerList[index];
+    if (playerToRemove.Id === statsPlayer?.Id) {
+      setStatsPlayer(null);
+    }
     setCurrDashboard({
       ...currDashboard,
       playerList: currDashboard.playerList.filter((_, i) => i !== index),
     });
+    console.log(currDashboard.playerList);
   };
 
   return (
     <Container className={`${classes["players-list"]} mt-3`}>
-      {currDashboard.playerList.map((player: PlayerModel, index: number) => {
+      {currDashboard.playerList.map((player: PlayerModel, statIdx: number) => {
         return (
-          <div key={player.Id} onClick={() => setStatsPlayer(player)}>
+          <div className={classes["row-wrapper"]} key={player.Id}>
+            <CloseButton
+              className={`${classes["close-btn"]}`}
+              onClick={() => removePlayer(statIdx)}
+            />
             <Row
+              onClick={() => setStatsPlayer(player)}
               className={`${classes["row"]} ${
                 statsPlayer?.Player === player.Player ? classes["active"] : ""
               }`}
@@ -50,9 +60,6 @@ function SelectedPlayers({
               </Col>
               <Col>{player.Player}</Col>
               <Col>{player.CurrentTeam}</Col>
-              <span className={classes["close-btn"]}>
-                <CloseButton onClick={() => removePlayer(index)} />
-              </span>
             </Row>
           </div>
         );

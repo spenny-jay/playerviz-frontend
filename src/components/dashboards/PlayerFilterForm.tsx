@@ -64,9 +64,16 @@ function PlayerFilterForm({ currDashboard, setCurrDashboard }: Props) {
               }}
             >
               <option>YDS</option>
-              <option>GP</option>
+              <option>AVG</option>
               <option>TD</option>
               <option>INT</option>
+              <option>ATT</option>
+              <option>CMP</option>
+              <option>CMP%</option>
+              <option>RTG</option>
+              <option>SACK</option>
+              <option>LNG</option>
+              <option>GP</option>
             </Form.Select>
           </Form.Group>
         </Col>

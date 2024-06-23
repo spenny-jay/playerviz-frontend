@@ -7,6 +7,7 @@ import DashboardModal from "./DashboardModal";
 import { DashboardResponse } from "../../models/DashboardResponse";
 import { DashboardNameModel } from "../../models/DashboardNameModel";
 import { getDashboardApi, saveDashboardApi } from "../../Api";
+import { PlayerModel } from "../../models/PlayerModel";
 
 /**
  * Parent class for the dashboards. User can toggle which dashboard
@@ -20,6 +21,8 @@ function DashboardTabs() {
   const [showModal, setShowModal] = useState<boolean>(true);
   // player data to render on graph
   const [currDashboard, setCurrDashboard] = useState<DashboardResponse>();
+  // stores stats for the selected player for the StatsTable
+  const [statsPlayer, setStatsPlayer] = useState<PlayerModel>();
 
   /**
    * Function used to switch tabs and populate dashboard data.
@@ -62,6 +65,7 @@ function DashboardTabs() {
     // render and reveal the dashboard's content
     setCurrDashboard(dashboard);
     setActiveTab(dashboard.dashboardId);
+    setStatsPlayer(null);
     return tabState;
   };
 
@@ -92,7 +96,7 @@ function DashboardTabs() {
       // close a dashboard and its tab
       case "CLOSE":
         const { dashboardId } = action;
-        const filteredTabs = state.filter(
+        const filteredTabs: DashboardNameModel[] = state.filter(
           (tab) => tab.dashboardId !== dashboardId
         );
         setCurrDashboard(null);
@@ -165,6 +169,8 @@ function DashboardTabs() {
         <MainDashboard
           currDashboard={currDashboard}
           setCurrDashboard={setCurrDashboard}
+          setStatsPlayer={setStatsPlayer}
+          statsPlayer={statsPlayer}
         />
       )}
 

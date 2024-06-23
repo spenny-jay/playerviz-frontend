@@ -3,6 +3,9 @@ import { Floppy, Trash, XLg } from "react-bootstrap-icons";
 import classes from "./DashboardTabTitle.module.css";
 import { Dispatch } from "react";
 import { deleteDashboardApi } from "../../Api";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+
+const IconTooltip = (text: string) => <Tooltip>{text}</Tooltip>;
 
 type Props = {
   dashboardName: string;
@@ -33,37 +36,48 @@ function DashboardTabTitle({
 
   return (
     <>
-      <input
-        className={classes["title-input"]}
-        type="text"
-        value={dashboardName}
-        onChange={(e) =>
-          tabDispatch({
-            type: "UPDATE",
-            dashboardName: e.target.value,
-            dashboardId: dashboardId,
-          })
-        }
-      />
+      <OverlayTrigger overlay={IconTooltip("Update Title")}>
+        <input
+          className={classes["title-input"]}
+          type="text"
+          value={dashboardName}
+          onChange={(e) =>
+            tabDispatch({
+              type: "UPDATE",
+              dashboardName: e.target.value,
+              dashboardId: dashboardId,
+            })
+          }
+        />
+      </OverlayTrigger>
+
       <div className={classes["button-wrapper"]}>
         {isActive && (
           <>
-            <Floppy
-              onClick={() => saveDashboard(dashboardId, dashboardName)}
-              className={classes["floppy-icon"]}
-            />
-            <Trash
-              className={classes["trash-icon"]}
-              onClick={() => deleteDashboard(dashboardId)}
-            />
+            <OverlayTrigger overlay={IconTooltip("Save Dashboard")}>
+              <Floppy
+                onClick={() => saveDashboard(dashboardId, dashboardName)}
+                className={classes["floppy-icon"]}
+              />
+            </OverlayTrigger>
+
+            <OverlayTrigger overlay={IconTooltip("Delete Dashboard")}>
+              <Trash
+                className={classes["trash-icon"]}
+                onClick={() => deleteDashboard(dashboardId)}
+              />
+            </OverlayTrigger>
           </>
         )}
-        <XLg
-          className={classes["close-icon"]}
-          onClick={() =>
-            tabDispatch({ type: "CLOSE", dashboardId: dashboardId })
-          }
-        />
+        <OverlayTrigger overlay={IconTooltip("Close Dashboard")}>
+          <XLg
+            className={classes["close-icon"]}
+            onClick={() => {
+              saveDashboard(dashboardId, dashboardName);
+              tabDispatch({ type: "CLOSE", dashboardId: dashboardId });
+            }}
+          />
+        </OverlayTrigger>
       </div>
     </>
   );
