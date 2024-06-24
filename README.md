@@ -16,3 +16,4 @@ The frontend is primarily comprised of React.js, TypeScript, CSS, React-Bootstra
 ## Renaining Work
 - Additional NFL positions and more players
 - More chart types
+- Robust logging 
